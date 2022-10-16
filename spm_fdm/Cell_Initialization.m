@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%% Simulate a lithium-ion cell cell %%%%%%%%
+%%%%%%% Simulate a lithium-ion cell cell %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % % Model description: 
 % Electrochemical model: Single Particle Model (ESPM)
@@ -52,7 +52,7 @@ param.cycles = 0; % experiment time in seconds
 
 % SPECIFY: Finite Difference / Volume Discretization Parameters
 param.Nc = 1;      % Number of cells in series (Keep this 1)
-param.Nr = 10;     % Number of radial discretization grids in ESPM
+param.Nr = 100;     % Number of radial discretization grids in ESPM
 
 % SPECIFY: degree of variation in model parameters and initialize
 param.SOC_ref = 1;                            % Initial SOC
@@ -91,6 +91,12 @@ title('Current Profile','Fontsize',12,'interpreter','latex')
 set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
+nr_str = string(param.Nr)
+cr_str = 'Ex' %string(I_multiply/2)
+filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_Iapp'
+% saveas(gcf,filename + '.png')
+% writematrix(param.I_data, filename + '.dat')
+
 % Cell voltage and electrode OCP plots
 figure()
 subplot(3,1,1)
@@ -118,10 +124,10 @@ set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 nr_str = string(param.Nr)
-cr_str = string(I_multiply/2)
+cr_str = 'Ex' %string(I_multiply/2)
 filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_voltage'
-saveas(gcf,filename + '.png')
-writematrix(V_cell, filename + '.dat')
+% saveas(gcf,filename + '.png')
+% writematrix(V_cell, filename + '.dat')
 
 % Bulks SOC plots
 figure()
@@ -160,10 +166,10 @@ set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 nr_str = string(param.Nr)
-cr_str = string(I_multiply/2)
+cr_str = 'Ex' %string(I_multiply/2)
 filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_csurf'
-saveas(gcf,filename + '.png')
-writematrix(cs_p(param.Nr-1 , :), filename + '.dat')
+% saveas(gcf,filename + '.png')
+% writematrix(cs_p(param.Nr-1 , :), filename + '.dat')
 
 % Average concentration plots
 figure()

@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%% Simulate a lithium-ion cell cell %%%%%%%%
+%%%%%%% Simulate a lithium-ion cell cell %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % % Model description: 
 % Electrochemical model: Single Particle Model (ESPM)
@@ -39,20 +39,22 @@ I_multiply = 2; %current magnitude
 param.I_data = I_multiply*ones(length(param.t_data),1); % current vector
 
 % Overwrite config with experimental data
-
+input_data = readtable('NMC_Cell_H1_T23_UDDS.xlsx')
+param.t_duration = 2600;
+param.dt = 0.1 % sampling time
+param.t_data = input_data.Test_Time_s_ % time vector
+param.I_data = input_data.Current_A_ % current vector
 
 % Specify number of additional cycles beyond initial charge / discharge
 % 'Run_module' script will concatenate alternating charge / discharge
 % current profiles as needed to meet the input # of cycles
-param.cycles = 0;
+param.cycles = 0; % experiment time in seconds
 
 % SPECIFY: Finite Difference / Volume Discretization Parameters
-
 param.Nc = 1;      % Number of cells in series (Keep this 1)
-param.Nr = 5;     % Number of radial discretization grids in ESPM
+param.Nr = 10;     % Number of radial discretization grids in ESPM
 
 % SPECIFY: degree of variation in model parameters and initialize
-
 param.SOC_ref = 1;                            % Initial SOC
 
 % Initialize all model parameters
@@ -117,7 +119,7 @@ xlim([0 max(param.t_data/3600)])
 
 nr_str = string(param.Nr)
 cr_str = string(I_multiply/2)
-filename = 'fdm_ode15s_nr' + nr_str + '_cr' + cr_str + '_voltage'
+filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_voltage'
 saveas(gcf,filename + '.png')
 writematrix(V_cell, filename + '.dat')
 
@@ -159,7 +161,7 @@ xlim([0 max(param.t_data/3600)])
 
 nr_str = string(param.Nr)
 cr_str = string(I_multiply/2)
-filename = 'fdm_ode15s_nr' + nr_str + '_cr' + cr_str + '_csurf'
+filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_csurf'
 saveas(gcf,filename + '.png')
 writematrix(cs_p(param.Nr-1 , :), filename + '.dat')
 
@@ -183,6 +185,6 @@ xlim([0 max(param.t_data/3600)])
 
 nr_str = string(param.Nr)
 cr_str = string(I_multiply/2)
-filename = 'fdm_ode15s_nr' + nr_str + '_cr' + cr_str + '_cavg'
+filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_cavg'
 % saveas(gcf,filename + '.png')
 % writematrix(mean(cs_p), filename + '.dat')
