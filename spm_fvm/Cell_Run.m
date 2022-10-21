@@ -13,7 +13,7 @@ options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
 % [t_out, x_out, te, xe, ie] = ode45(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
 [t_out, x_out, te, xe, ie] = ode15s(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
 
-dr = 1; %param.Rs_p / param.Nr;
+dr = param.Rs_p / param.Nr;
 r_out = transpose(x_initial);
 u_out = r_out(2:end-1);
 for t = 1:(param.t_duration / param.dt)
@@ -26,8 +26,8 @@ for t = 1:(param.t_duration / param.dt)
         dr, param.Dsn_ref, param.F, param.A, param.Ln, param.a_sn);
     
     % combine 
-    r_i = [r_ni, r_pi];
-    u_i = [u_ni, u_pi];
+    r_i = [r_pi, r_ni];
+    u_i = [u_pi, u_ni];
 
     r_out = [r_out; r_i];
     u_out = [u_out; u_i];
