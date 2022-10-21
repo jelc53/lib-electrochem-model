@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%% Simulate a lithium-ion cell cell %%%%%%%%
+%%%%%%% Simulate a lithium-ion cell cell %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % % Model description: 
 % Electrochemical model: Single Particle Model (ESPM)
@@ -38,18 +38,23 @@ param.t_data = [0:param.dt:param.t_duration]'; % time vector
 I_multiply = 2; %current magnitude
 param.I_data = I_multiply*ones(length(param.t_data),1); % current vector
 
+% Overwrite config with experimental data
+% input_data = readtable('NMC_Cell_H1_T23_UDDS.xlsx')
+% param.t_duration = 2600;
+% param.dt = 0.1 % sampling time
+% param.t_data = input_data.Test_Time_s_ % time vector
+% param.I_data = input_data.Current_A_ % current vector
+
 % Specify number of additional cycles beyond initial charge / discharge
 % 'Run_module' script will concatenate alternating charge / discharge
 % current profiles as needed to meet the input # of cycles
-param.cycles = 5;
+param.cycles = 10; % experiment time in seconds
 
 % SPECIFY: Finite Difference / Volume Discretization Parameters
-
 param.Nc = 1;      % Number of cells in series (Keep this 1)
 param.Nr = 10;     % Number of radial discretization grids in ESPM
 
 % SPECIFY: degree of variation in model parameters and initialize
-
 param.SOC_ref = 1;                            % Initial SOC
 
 % Initialize all model parameters
@@ -80,88 +85,112 @@ run_time = toc
 % Input current profile plot
 figure()
 plot(param.t_data/3600, param.I_data, 'b','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('Current [A]','Fontsize',16,'interpreter','latex')
-title('Current Profile','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('Current [A]','Fontsize',12,'interpreter','latex')
+title('Current Profile','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
+
+nr_str = string(param.Nr)
+cr_str = 'Ex' %string(I_multiply/2)
+filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_Iapp'
+% saveas(gcf,filename + '.png')
+% writematrix(param.I_data, filename + '.dat')
 
 % Cell voltage and electrode OCP plots
 figure()
 subplot(3,1,1)
 plot(param.t_data/3600, V_cell, 'b','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('Voltage [V]','Fontsize',16,'interpreter','latex')
-title('Voltage Response','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('Voltage [V]','Fontsize',12,'interpreter','latex')
+title('Voltage Response','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 subplot(3,1,2)
 plot(param.t_data/3600, Up, '--r','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('Voltage [V]','Fontsize',16,'interpreter','latex')
-title('Open Circuit Potential - Positive Electrode','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('Voltage [V]','Fontsize',12,'interpreter','latex')
+title('Open Circuit Potential - Positive Electrode','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 subplot(3,1,3)
 plot(param.t_data/3600, Un, ':g','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('Voltage [V]','Fontsize',16,'interpreter','latex')
-title('Open Circuit Potential - Negative Electrode','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('Voltage [V]','Fontsize',12,'interpreter','latex')
+title('Open Circuit Potential - Negative Electrode','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
+
+nr_str = string(param.Nr)
+cr_str = 'Ex' %string(I_multiply/2)
+filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_voltage'
+% saveas(gcf,filename + '.png')
+% writematrix(V_cell, filename + '.dat')
 
 % Bulks SOC plots
 figure()
 subplot(2,1,1)
 plot(param.t_data/3600, soc_bulk_p, 'b','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('SOC [-]','Fontsize',16,'interpreter','latex')
-title('Bulk SOC - Positive Electrode','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('SOC [-]','Fontsize',12,'interpreter','latex')
+title('Bulk SOC - Positive Electrode','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 subplot(2,1,2)
 plot(param.t_data/3600, soc_bulk_n, '--r','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('SOC [-]','Fontsize',16,'interpreter','latex')
-title('Bulk SOC - Negative Electrode','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('SOC [-]','Fontsize',12,'interpreter','latex')
+title('Bulk SOC - Negative Electrode','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 % Surface concentration plots
 figure()
 subplot(2,1,1)
 plot(param.t_data/3600, cs_p(end,:), 'b','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('$c_{surf,p}$ [$mol/m^3$]','Fontsize',16,'interpreter','latex')
-title('Surface Concentration - Positive Electrode','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('$c_{surf,p}$ [$mol/m^3$]','Fontsize',12,'interpreter','latex')
+title('Surface Concentration - Positive Electrode','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 subplot(2,1,2)
 plot(param.t_data/3600, cs_n(end,:), '--r','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('$c_{surf,n}$ [$mol/m^3$]','Fontsize',16,'interpreter','latex')
-title('Surface Concentration - Negative Electrode','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('$c_{surf,n}$ [$mol/m^3$]','Fontsize',12,'interpreter','latex')
+title('Surface Concentration - Negative Electrode','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
+
+nr_str = string(param.Nr)
+cr_str = 'Ex' %string(I_multiply/2)
+filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_csurf'
+% saveas(gcf,filename + '.png')
+% writematrix(cs_p(param.Nr-1 , :), filename + '.dat')
 
 % Average concentration plots
 figure()
 subplot(2,1,1)
 plot(param.t_data/3600, mean(cs_p), 'b','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('$c_{avg,p}$ [$mol/m^3$]','Fontsize',16,'interpreter','latex')
-title('Average Solid Concentration - Positive Electrode','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('$c_{avg,p}$ [$mol/m^3$]','Fontsize',12,'interpreter','latex')
+title('Average Concentration - Positive Electrode','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 subplot(2,1,2)
 plot(param.t_data/3600, mean(cs_n), '--r','Linewidth',2); grid on
-xlabel('Time [h]','Fontsize',16,'interpreter','latex')
-ylabel('$c_{avg,p}$ [$mol/m^3$]','Fontsize',16,'interpreter','latex')
-title('Average Solid Concentration - Negative Electrode','Fontsize',16,'interpreter','latex')
-set(gca,'Fontsize',16)
+xlabel('Time [h]','Fontsize',12,'interpreter','latex')
+ylabel('$c_{avg,p}$ [$mol/m^3$]','Fontsize',12,'interpreter','latex')
+title('Average Concentration - Negative Electrode','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
+
+nr_str = string(param.Nr)
+cr_str = string(I_multiply/2)
+filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_cavg'
+% saveas(gcf,filename + '.png')
+% writematrix(mean(cs_p), filename + '.dat')

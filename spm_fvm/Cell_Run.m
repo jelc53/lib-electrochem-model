@@ -2,17 +2,16 @@ function[V_cell, soc_bulk_n, soc_bulk_p, ...
     cs_n, cs_p, ocp_p, ocp_n, V_oc, param] = Cell_Run(x_initial,param)
 
 %% Generate matrices for solid phase, electrolyte phase, thermal, and aging
-
 % Solid phase discretization matrices
 [param.A_sd, param.B_sd_n, param.B_sd_p] = matrices_solidphase(param);
 
 %% Solve ODEs 
-
 tspan = param.t_data;
 reltol=5.0e-05; abstol=5.0e-05;
 event_formatted = @(t,x) physical_event_function(t,x,param); 
 options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
-[t_out, x_out,te,xe,ie] = ode15s(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
+% [t_out, x_out, te, xe, ie] = ode45(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
+[t_out, x_out, te, xe, ie] = ode15s(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
 
 %Transpose state matrix into row form to match established data structure 
 x_out = x_out';
