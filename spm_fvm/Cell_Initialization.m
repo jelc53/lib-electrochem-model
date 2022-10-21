@@ -48,7 +48,7 @@ param.I_data = I_multiply*ones(length(param.t_data),1); % current vector
 % Specify number of additional cycles beyond initial charge / discharge
 % 'Run_module' script will concatenate alternating charge / discharge
 % current profiles as needed to meet the input # of cycles
-param.cycles = 10; % experiment time in seconds
+param.cycles = 0; % experiment time in seconds
 
 % SPECIFY: Finite Difference / Volume Discretization Parameters
 param.Nc = 1;      % Number of cells in series (Keep this 1)
