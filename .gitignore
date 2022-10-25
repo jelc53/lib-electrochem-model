@@ -1,3 +1,4 @@
 # ignore data files
 **/output
 *.xlsx
+*.zip

@@ -8,10 +8,10 @@ warning off
 clc
 
 % Voltage
-ref = 'nr100_cr1'
+ref = 'nr1000_cr1'
 rms_voltage = dictionary()
 results_voltage = table() 
-for nr = [100, 50, 10]
+for nr = [1000, 100, 50, 10]
     for cr = [1]
         nr_str = string(nr);
         cr_str = string(cr);
@@ -26,11 +26,16 @@ for nr = [100, 50, 10]
     end
 end
 
+x = [1000, 100, 50, 10];
+y = rms_voltage.values;
+loglog(x,y)
+grid on
+
 % Surface concentration
-ref = 'nr100_cr1'
+ref = 'nr1000_cr1'
 rms_csurf = dictionary()
 results_csurf = table() 
-for nr = [100, 50, 10]
+for nr = [1000, 100, 50, 10]
     for cr = [1]
         nr_str = string(nr);
         cr_str = string(cr);

@@ -33,11 +33,11 @@ clc
 
 % For a custom input current profile (constant current discharge)
 param.t_duration = 3600; % simulation time in seconds
-param.dt = 0.5; % sampling time            
+param.dt = 0.05; % sampling time            
 param.t_data = [0:param.dt:param.t_duration]'; % time vector
 I_multiply = 2; %current magnitude
 param.I_data = I_multiply*ones(length(param.t_data),1); % current vector
-
+      
 % Overwrite config with experimental data
 % input_data = readtable('NMC_Cell_H1_T23_UDDS.xlsx')
 % param.t_duration = 2600;

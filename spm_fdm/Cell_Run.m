@@ -9,7 +9,7 @@ function[V_cell, soc_bulk_n, soc_bulk_p, ...
 tspan = param.t_data;
 reltol=5.0e-05; abstol=5.0e-05;
 event_formatted = @(t,x) physical_event_function(t,x,param); 
-options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
+options=odeset('RelTol',reltol,'AbsTol',abstol, 'Events', event_formatted);
 % [t_out, x_out, te, xe, ie] = ode45(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
 [t_out, x_out, te, xe, ie] = ode15s(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
 

@@ -48,7 +48,7 @@ param.I_data = I_multiply*ones(length(param.t_data),1); % current vector
 % Specify number of additional cycles beyond initial charge / discharge
 % 'Run_module' script will concatenate alternating charge / discharge
 % current profiles as needed to meet the input # of cycles
-param.cycles = 10; % experiment time in seconds
+param.cycles = 0; % experiment time in seconds
 
 % SPECIFY: Finite Difference / Volume Discretization Parameters
 param.Nc = 1;      % Number of cells in series (Keep this 1)
@@ -92,7 +92,7 @@ set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 nr_str = string(param.Nr)
-cr_str = 'Ex' %string(I_multiply/2)
+cr_str = string(I_multiply/2)  % 'Ex'
 filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_Iapp'
 % saveas(gcf,filename + '.png')
 % writematrix(param.I_data, filename + '.dat')
@@ -124,10 +124,10 @@ set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 nr_str = string(param.Nr)
-cr_str = 'Ex' %string(I_multiply/2)
+cr_str = string(I_multiply/2)  % Ex
 filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_voltage'
-% saveas(gcf,filename + '.png')
-% writematrix(V_cell, filename + '.dat')
+saveas(gcf,filename + '.png')
+writematrix(V_cell, filename + '.dat')
 
 % Bulks SOC plots
 figure()
@@ -166,10 +166,10 @@ set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 nr_str = string(param.Nr)
-cr_str = 'Ex' %string(I_multiply/2)
+cr_str = string(I_multiply/2)  % 'Ex'
 filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_csurf'
-% saveas(gcf,filename + '.png')
-% writematrix(cs_p(param.Nr-1 , :), filename + '.dat')
+saveas(gcf,filename + '.png')
+writematrix(cs_p(param.Nr-1 , :), filename + '.dat')
 
 % Average concentration plots
 figure()
@@ -190,7 +190,7 @@ set(gca,'Fontsize',12)
 xlim([0 max(param.t_data/3600)])
 
 nr_str = string(param.Nr)
-cr_str = string(I_multiply/2)
+cr_str = string(I_multiply/2)  % 'Ex'
 filename = 'fdm_ode45_nr' + nr_str + '_cr' + cr_str + '_cavg'
 % saveas(gcf,filename + '.png')
 % writematrix(mean(cs_p), filename + '.dat')

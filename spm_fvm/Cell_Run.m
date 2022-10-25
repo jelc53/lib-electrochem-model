@@ -13,17 +13,16 @@ options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
 % [t_out, x_out, te, xe, ie] = ode45(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
 [t_out, x_out, te, xe, ie] = ode15s(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
 
-dr = param.Rs_p / param.Nr;
 r_out = transpose(x_initial);
 u_out = r_out(2:end-1);
 for t = 1:(param.t_duration / param.dt)
     % cathode
     [r_pi, u_pi] = finite_volume_update(r_out(t,1:param.Nr-1), u_out(t,1:param.Nr-2), param, ...
-        dr, param.Dsp_ref, param.F, param.A, param.Lp, param.a_sp);
+        param.delta_xp, param.Dsp_ref, param.F, param.A, param.Lp, param.a_sp);
     
     % anode
     [r_ni, u_ni] = finite_volume_update(r_out(t,param.Nr:end), u_out(t,param.Nr-1:end), param, ...
-        dr, param.Dsn_ref, param.F, param.A, param.Ln, param.a_sn);
+        param.delta_xn, param.Dsn_ref, param.F, param.A, param.Ln, param.a_sn);
     
     % combine 
     r_i = [r_pi, r_ni];
