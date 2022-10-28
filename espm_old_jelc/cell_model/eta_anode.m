@@ -1,0 +1,13 @@
+function eta_n = eta_anode(x, ce_n_avg, T_core, input_crt, param, kn, aina_n, af_n)
+
+% Calculates overpotential for the specified surface concentration
+
+i0_n= kn*param.F.*(ce_n_avg.^0.5).*...
+    ((param.c_n_max.*x).^0.5).*...
+    ((param.c_n_max-param.c_n_max.*x).^0.5); 
+
+eta_n = asinh(input_crt./(2*param.A*(param.a_sn+af_n-aina_n)*...
+    param.Ln.*i0_n)).*(param.Rg.*T_core)./...
+    (param.F*param.alpha_cell);
+
+end

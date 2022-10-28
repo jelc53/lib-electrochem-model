@@ -1,0 +1,94 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% ESPM validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% Gabriele Pozzato (gpozzato@stanford.edu) %%%%%% Date: 2020/12/29 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% In case of help, feel free to contact the author %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all
+close all
+clc
+global A_csn A_csp
+global err_Up err_theta_surf_p
+
+%% addpath model
+addpath cell_model
+
+addpath([pwd '/casadi-windows-matlabR2016a-v3.5.5'])
+
+import casadi.*
+%% Load identification results
+
+load([pwd '/opt_res/hist/x_opt_tk_v0_UDDS_1000_1s.mat'])
+
+
+% % Set err_Up to 0 (remove effect of U_p identification)
+% err_Up = 0;
+
+%% Load Experimental Data
+% Load cycling data for N<=25 preloaded for cell W8
+
+% randn('seed',10);
+% I_data=2.1*1*ones(1,size(I_data,2))+0.0001*randn(1,size(I_data,2));
+% I_data=2.1*1*ones(1,size(I_data,2));
+% SOC_IC=1;
+
+
+% %=======================Condition 1: UDDS
+% load('data/UDDS_cycle_1.mat')
+% SOC_IC=0.8;
+% use_time=3000;
+
+%=======================Condition 2: Constant charge
+use_time=3600;
+randn('seed',10);
+I_data=-2.4/1*ones(1,use_time)+0.0001*randn(1,use_time);
+SOC_IC=0;
+
+
+
+% %=======================Condition 3: Constant charge 1/20 C
+% use_time=3600*20;
+% randn('seed',10);
+% I_data=-2.4/20*ones(1,use_time)+0.0001*randn(1,use_time);
+% SOC_IC=0;
+
+
+
+t_data=linspace(0,use_time-1,use_time);
+dt=1;
+Q_IC=5;
+Lsei_IC=0;
+T_amb=23;
+I_data=I_data(1:use_time);
+V_data=ones(1,use_time);
+SOC_cc=ones(1,use_time);
+
+
+%% Sim
+% NB
+% Set event function max time to 1000s
+% Set relative tolerance to 5e-8
+
+% T_amb=30
+tic
+[V_cell, R_l, T_core, T_surf,soc_bulk_n, soc_bulk_p, cs_n, cs_p,...
+ ce_all,L_sei,i_s,Q,V_oc,R_el,R_sei,Csolv,aina_n,aina_p,...
+ c_sei,c_li,i_lpl,L_film,af_n,af_p,param] = ESPM_sim(x_opt,dt,t_data,I_data,SOC_cc,SOC_IC,Q_IC,Lsei_IC,T_amb);
+caltime=toc
+plot(V_cell)
+
+
+all_data.ce=ce_all;
+all_data.csp=cs_p;
+all_data.csn=cs_n;
+all_data.node_Nr=param.Nr;
+all_data.node_Nxp=param.Nx_p;
+all_data.node_Nxs=param.Nx_s;
+all_data.node_Nxn=param.Nx_n;
+all_data.par=param;
+all_data.V=V_cell;
+all_data.caltime=caltime;
+
+save('Newsolver_re.mat','all_data')
+

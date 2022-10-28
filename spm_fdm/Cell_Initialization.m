@@ -39,11 +39,11 @@ I_multiply = 2; %current magnitude
 param.I_data = I_multiply*ones(length(param.t_data),1); % current vector
 
 % Overwrite config with experimental data
-% input_data = readtable('NMC_Cell_H1_T23_UDDS.xlsx')
-% param.t_duration = 2600;
-% param.dt = 0.1 % sampling time
-% param.t_data = input_data.Test_Time_s_ % time vector
-% param.I_data = input_data.Current_A_ % current vector
+input_data = readtable('NMC_Cell_H1_T23_UDDS.xlsx')
+param.t_duration = 2600;
+param.dt = 0.1 % sampling time
+param.t_data = input_data.Test_Time_s_ % time vector
+param.I_data = input_data.Current_A_ % current vector
 
 % Specify number of additional cycles beyond initial charge / discharge
 % 'Run_module' script will concatenate alternating charge / discharge
