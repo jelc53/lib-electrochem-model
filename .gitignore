@@ -1,5 +1,6 @@
 # ignore data files
 **/output
+**/data
 *.xlsx
 *.zip
 data/
