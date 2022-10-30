@@ -18,31 +18,25 @@ ref_iapp96 = load(fullfile('output',append(ref_model,'_nr1000_cr4_time300_cyc0.m
 ref_data = [ref_iapp24 ref_iapp48 ref_iapp96];
 
 ref_table = table;
-ref_cs_avg_n = [];
-ref_cs_avg_p = [];
+ref_csn_avg = [];
+ref_csp_avg = [];
 for i = 1:length(ref_data)
     ref = ref_data(i);
     Nr = ref.all_data.node_Nr;
-    volume_n = (4/3)*pi*(ref.all_data.par.Rs_n^3);
-    volume_p = (4/3)*pi*(ref.all_data.par.Rs_p^3);
-    delta_xn = ref.all_data.par.delta_xn;
-    delta_xp = ref.all_data.par.delta_xp;
-    vol_xn = (4/3)*pi*((delta_xn * (1:(Nr-1))).^3);
-    vol_xp = (4/3)*pi*((delta_xp * (1:(Nr-1))).^3);
-    weights_n = [vol_xn(1), diff(vol_xn)] ./ volume_p;
-    weights_p = [vol_xn(1), diff(vol_xp)] ./ volume_p;
-    cs_avg_n = dot(weights_n, ref.all_data.csn(:,end));
-    cs_avg_p = dot(weights_p, ref.all_data.csp(:,end));
-    
-    ref_cs_avg_n = [ref_cs_avg_n; cs_avg_n];
-    ref_cs_avg_p = [ref_cs_avg_p; cs_avg_p];
+    Rs_n = ref.all_data.par.Rs_n; Rs_p = ref.all_data.par.Rs_p; 
+    delta_xn = ref.all_data.par.delta_xn; delta_xp = ref.all_data.par.delta_xp; 
+    [wn_vec, csn_avg] = radial_average(ref.all_data.csn(:,end),Nr,Rs_n,delta_xn);
+    [wp_vec, csp_avg] = radial_average(ref.all_data.csp(:,end),Nr,Rs_p,delta_xp);
+
+    ref_csn_avg = [ref_csn_avg; csn_avg];
+    ref_csp_avg = [ref_csp_avg; csp_avg];
 
     ref_table.(string(i)) = [
         ref.all_data.V(end); 
         ref.all_data.csn(end,end);
         ref.all_data.csp(end,end);
-        dot(weights_n, ref.all_data.csn(:,end));
-        dot(weights_p, ref.all_data.csp(:,end));
+        dot(wn_vec, ref.all_data.csn(:,end));
+        dot(wp_vec, ref.all_data.csp(:,end));
     ];
 end
 
@@ -63,6 +57,11 @@ for i = 1:length(c_rates)
         % load experiment data
         filename = string(model ) + '_nr' + string(nr_dims(j)) + '_cr' + string(c_rates(i)) + '_time' + string(cr_duration(i)) + '_cyc0.mat';
         exp_data = load(fullfile('output',filename));
+        
+        Nr = exp_data.all_data.node_Nr;
+        ref_Nr = ref_data(i).all_data.node_Nr;
+        Rs_n = exp_data.all_data.par.Rs_n; Rs_p = exp_data.all_data.par.Rs_p;
+        delta_xn = exp_data.all_data.par.delta_xn;  delta_xp = exp_data.all_data.par.delta_xp;
 
         % voltage
         ref_vals = ref_data(i).all_data.V;
@@ -78,25 +77,133 @@ for i = 1:length(c_rates)
         };
         results_table = [results_table; new_row];
 
-        % surface concentration
+        % surface concentration (anode)
+        ref_vals = ref_data(i).all_data.csn(end,:);
+        exp_vals = exp_data.all_data.csn(end,:);
+        new_row = {
+            'csn_surf',...
+            nr_dims(j),...
+            c_rates(i),...
+            cr_duration(i),...
+            ref_vals(end),...
+            exp_vals(end),...
+            rmse(ref_vals,exp_vals)
+        };
+        results_table = [results_table; new_row];
 
-        % average concentration
+        % surface concentration (cathode)
+        ref_vals = ref_data(i).all_data.csp(end,:);
+        exp_vals = exp_data.all_data.csp(end,:);
+        new_row = {
+            'csp_surf',...
+            nr_dims(j),...
+            c_rates(i),...
+            cr_duration(i),...
+            ref_vals(end),...
+            exp_vals(end),...
+            rmse(ref_vals,exp_vals)
+        };
+        results_table = [results_table; new_row];
+
+        % average concentration (anode)
+        [ref_wn_vec, ref_vals] = radial_average(ref_data(i).all_data.csn,ref_Nr,Rs_n,delta_xn);
+        [wn_vec, exp_vals] = radial_average(exp_data.all_data.csn,Nr,Rs_n,delta_xn);
+        new_row = {
+            'csn_avg',...
+            nr_dims(j),...
+            c_rates(i),...
+            cr_duration(i),...
+            ref_vals(end),...
+            exp_vals(end),...
+            rmse(ref_vals,exp_vals)
+        };
+        results_table = [results_table; new_row];
+
+        % average concentration (anode)
+        [ref_wp_vec, ref_vals] = radial_average(ref_data(i).all_data.csp,ref_Nr,Rs_p,delta_xp);
+        [wp_vec, exp_vals] = radial_average(exp_data.all_data.csp,Nr,Rs_p,delta_xp);
+        new_row = {
+            'csp_avg',...
+            nr_dims(j),...
+            c_rates(i),...
+            cr_duration(i),...
+            ref_vals(end),...
+            exp_vals(end),...
+            rmse(ref_vals,exp_vals)
+        };
+        results_table = [results_table; new_row];
     end
 end
 results_table.Properties.VariableNames = variable_names;
 writetable(results_table, fullfile('results_table.dat'))
 
 %% Plot V_RMS, Csurf_RMS, Cavg_RMS
-% Voltage
+% voltage
 figure; hold on;  grid on;
 a = [];
 for i = 1:length(c_rates)
-    idx = strcmp(results_table.measure{i},'voltage') & results_table.c_rate == c_rates(i);
+    idx = strcmp(results_table.measure,'voltage') & results_table.c_rate == c_rates(i);
     a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
 end
 M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
 legend(a, [M1, M2, M3]);
 xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
-ylabel('V_RMSE','Fontsize',12,'interpreter','latex')
+ylabel('Voltage RMSE','Fontsize',12,'interpreter','latex')
 set(gca,'Fontsize',12, 'XScale', 'log');
 saveas(gcf,'voltage_rmse_plot.png')
+
+% surface concentration (anode)
+figure; hold on;  grid on;
+a = [];
+for i = 1:length(c_rates)
+    idx = strcmp(results_table.measure,'csn_surf') & results_table.c_rate == c_rates(i);
+    a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+end
+M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
+legend(a, [M1, M2, M3]);
+xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
+ylabel('Anode Csurf RMSE','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12, 'XScale', 'log');
+saveas(gcf,'cn_surf_rmse_plot.png')
+
+% surface concentration (cathode)
+figure; hold on;  grid on;
+a = [];
+for i = 1:length(c_rates)
+    idx = strcmp(results_table.measure,'csp_surf') & results_table.c_rate == c_rates(i);
+    a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+end
+M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
+legend(a, [M1, M2, M3]);
+xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
+ylabel('Cathode Csurf RMSE','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12, 'XScale', 'log');
+saveas(gcf,'cp_surf_rmse_plot.png')
+
+% average concentration (anode)
+figure; hold on;  grid on;
+a = [];
+for i = 1:length(c_rates)
+    idx = strcmp(results_table.measure,'csn_avg') & results_table.c_rate == c_rates(i);
+    a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+end
+M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
+legend(a, [M1, M2, M3]);
+xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
+ylabel('Anode Cavg RMSE','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12, 'XScale', 'log');
+saveas(gcf,'cn_avg_rmse_plot.png')
+
+% average concentration (cathode)
+figure; hold on;  grid on;
+a = [];
+for i = 1:length(c_rates)
+    idx = strcmp(results_table.measure,'csp_avg') & results_table.c_rate == c_rates(i);
+    a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+end
+M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
+legend(a, [M1, M2, M3]);
+xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
+ylabel('Cathode Cavg RMSE','Fontsize',12,'interpreter','latex')
+set(gca,'Fontsize',12, 'XScale', 'log');
+saveas(gcf,'cp_avg_rmse_plot.png')
