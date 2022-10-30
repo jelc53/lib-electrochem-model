@@ -114,7 +114,7 @@ L_film = x_out(index_thermal+6*param.Nc+1:index_thermal+7*param.Nc,:); %Film Lay
 Csolv = x_out(index_aging+1:end,:); %Solvent Concentration in SEI 
 
 %% Temperature dependent transport and kinetics for each cell
-for j = 1:length(cs)
+for j = 1:size(cs,2)
     % Surface concentration -> surface stoichiometry
     for i = 1:param.Nc
         theta_surf_n(i,j) = cs_n(i*(param.Nr-1),j)/param.c_n_max;

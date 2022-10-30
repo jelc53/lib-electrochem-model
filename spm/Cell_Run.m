@@ -9,38 +9,34 @@ function[V_cell, soc_bulk_n, soc_bulk_p, ...
 tspan = param.t_data;
 reltol=5.0e-05; abstol=5.0e-05;
 event_formatted = @(t,x) physical_event_function(t,x,param); 
-options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
+options=odeset('RelTol',reltol,'AbsTol',abstol, 'Events', event_formatted);
 % [t_out, x_out, te, xe, ie] = ode45(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
 [t_out, x_out, te, xe, ie] = ode15s(@(t_out, x_out) Cell_ode(t_out, x_out, param), tspan, x_initial, options);
 
-r_out = transpose(x_initial);
-u_out = r_out(2:end-1);
-for t = 1:(param.t_duration / param.dt)
-    % cathode
-    [r_pi, u_pi] = finite_volume_update(r_out(t,1:param.Nr-1), u_out(t,1:param.Nr-2), param, ...
-        param.delta_xp, param.Dsp_ref, param.F, param.A, param.Lp, param.a_sp);
-    
-    % anode
-    [r_ni, u_ni] = finite_volume_update(r_out(t,param.Nr:end), u_out(t,param.Nr-1:end), param, ...
-        param.delta_xn, param.Dsn_ref, param.F, param.A, param.Ln, param.a_sn);
-    
-    % combine 
-    r_i = [r_pi, r_ni];
-    u_i = [u_pi, u_ni];
-
-    r_out = [r_out; r_i];
-    u_out = [u_out; u_i];
-    
-end
+%% Finite Volume 
+% u_out = transpose(x_initial(2:end-1));
+% for t = 1:(param.t_duration / param.dt)
+%     % cathode
+%     [u_pi] = finite_volume_update(u_out(t,1:param.Nr-2), param, ...
+%         param.delta_xp, param.Dsp_ref, param.F, param.A, param.Lp, param.a_sp);
+%     
+%     % anode
+%     [u_ni] = finite_volume_update(u_out(t,param.Nr-1:end), param, ...
+%         param.delta_xn, param.Dsn_ref, param.F, param.A, param.Ln, param.a_sn);
+%     
+%     % combine 
+%     u_i = [u_pi, u_ni];
+%     u_out = [u_out; u_i];   
+% end
 
 %Transpose state matrix into row form to match established data structure 
-x_out = r_out'; %x_out'; TODO!
+x_out = x_out';
 I_dummy = param.I_data(1:size(x_out,2)); %Store exact current profiles used in I_dummy
 
 if param.cycles == 0
 %For no additional cycles, output the relevant variables
     param.I_data = I_dummy;
-%     param.t_data = t_out; TODO!
+    param.t_data = t_out;
     
 else
     
@@ -74,6 +70,7 @@ end
 cs = x_out(1:(param.Nr-1)*param.Nc*2,:);            %All solid concentrations
 cs_n = cs(1:(param.Nr-1)*param.Nc,:);               %Anode Concentrations
 cs_p = cs((param.Nr-1)*param.Nc+1:end,:);           %Cathode Concentrations
+
 
 for j = 1:length(cs)
     

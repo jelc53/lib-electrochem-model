@@ -1,4 +1,4 @@
-function [r_i, u_i] = finite_volume_update(r_out, u_out, param, dr, D_sj, F, A, L_j, a_sj)
+function [u_i] = finite_volume_update(u_out, param, dr, D_sj, F, A, L_j, a_sj)
     u_i = zeros(1,param.Nr-2);
 
     for k = 1:(param.Nr-2)
