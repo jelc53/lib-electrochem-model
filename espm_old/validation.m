@@ -36,9 +36,9 @@ load([pwd '/opt_res/hist/x_opt_tk_v0_UDDS_1000_1s.mat'])
 % use_time=3000;
 
 % %=======================Condition 2: Constant charge
-use_time=300; %3600
+use_time=3600; %3600
 randn('seed',10);
-I_data=-9.6/1*ones(1,use_time)+0.0001*randn(1,use_time); %2.4
+I_data=-2.4/1*ones(1,use_time)+0.0001*randn(1,use_time); %2.4
 SOC_IC=0;
 
 
