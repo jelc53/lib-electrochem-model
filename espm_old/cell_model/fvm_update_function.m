@@ -23,7 +23,7 @@ function [u_i] = fvm_update_function(u_out, param, dr, D_sj, F, A, L_j, a_sj)
         u_i(k) = u_out(k) - (D_sj*4*pi) * (param.dt / dr) * (f_plus - f_minus);
 
     end
-        r_i = [movmean(u_i, 2), u_i(end)];
+%     r_i = [movmean(u_i, 2), u_i(end)];
 %     u_out = [u_out; u_i];
 %     r_out = [r_out; r_i];
 end
