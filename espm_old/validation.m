@@ -35,21 +35,26 @@ load([pwd '/opt_res/hist/x_opt_tk_v0_UDDS_1000_1s.mat'])
 % SOC_IC=0.8;
 % use_time=3000;
 
-% %=======================Condition 2: Constant charge
+% =======================Condition 2: Constant charge
 use_time=3600; %3600
 randn('seed',10);
 I_data=-2.4/1*ones(1,use_time)+0.0001*randn(1,use_time); %2.4
 SOC_IC=0;
 
-
-
-% %=======================Condition 3: Constant charge 1/20 C
+% =======================Condition 3: Constant charge 1/20 C
 % use_time=3600*20;
 % randn('seed',10);
 % I_data=-2.4/20*ones(1,use_time)+0.0001*randn(1,use_time);
 % SOC_IC=0;
 
-
+% =======================Condition 4: Multiple charge and discharge cycles
+% randn('seed',10);
+% num_cycles=10;
+% discharge_time=3600;
+% use_time=discharge_time*2*num_cycles;
+% I_data=-2.4/1*ones(1,discharge_time);
+% I_data=repmat([I_data,-I_data],1,num_cycles)+0.0001*randn(1,use_time);
+% SOC_IC=0;
 
 t_data=linspace(0,use_time-1,use_time);
 dt=1;
@@ -71,7 +76,8 @@ tic
  ce_all,L_sei,i_s,Q,V_oc,R_el,R_sei,Csolv,aina_n,aina_p,...
  c_sei,c_li,i_lpl,L_film,af_n,af_p,param] = ESPM_sim(x_opt,dt,t_data,I_data,SOC_cc,SOC_IC,Q_IC,Lsei_IC,T_amb);
 caltime=toc
-plot(V_cell)
+% plot(V_cell)
+plot(cs_n(end,:))
 
 
 all_data.ce=ce_all;

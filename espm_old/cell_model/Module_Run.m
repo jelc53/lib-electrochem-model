@@ -37,11 +37,6 @@ options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
 [t_out, x_out,te,xe,ie] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_initial, options);
 trigged_index=ie;
 trigged_time=te;
-% tic
-% [t_out, x_out] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_initial, options);
-% toc
-% options=odeset('RelTol',reltol,'AbsTol',abstol);
-% [t_out, x_out] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_initial, options);
 
 % Transpose state matrix into row form to match established data structure 
 x_out = x_out';
@@ -64,8 +59,10 @@ else
         options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
         [t_out2, x_out2,te2,xe2,ie2] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_in2, options);
 %         [t_out2, x_out2,te2,xe2] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_in2, options);
+
         % Transpose state matrix into row form to match established data structure 
         x_out2 = x_out2';
+
         % Shift t_out2 to account for duration of previous cycles
         t_out2 = t_out2+t_out(end)+1;
 
@@ -78,6 +75,10 @@ else
     param.I_data = I_dummy;
     param.t_data = t_out;
 end
+
+%% Finite Volume alternative for solid phase
+[t_out,u_out,te2,xe2,ie2] = fvm_solver_jelc(x_initial(1:2*(param.Nr-1)), param, tspan);
+
 %% Separate electrochemical, thermal & aging state variables from x_out matrix
 %Define solid concentrations
 cs = x_out(1:(param.Nr-1)*param.Nc*2,:);            %All solid concentrations

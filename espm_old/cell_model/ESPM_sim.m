@@ -4,9 +4,9 @@ function [V_cell, R_l, T_core, T_surf,soc_bulk_n, soc_bulk_p, cs_n, cs_p,...
           SOC_cc, SOC_IC,Q_IC,Lsei_IC,T_amb) 
 
     % For a custom input current profile
-%     param.t_duration = t_data(end);                % simulation time in seconds
-%     param.dt = dt;                                 % sampling time            
-%     param.t_data = [0:param.dt:param.t_duration]'; % time vector
+    %     param.t_data = [0:param.dt:param.t_duration]'; % time vector
+    param.t_duration = t_data(end);                % simulation time in seconds
+    param.dt = dt;                                 % sampling time
     param.t_data = t_data;
     param.I_data = I_data;                         % current vector
     param.SOC_cc = SOC_cc;                         % Coulomb-counted SOC (needed for lumped resistance)

@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%% Evaluate stability & accuracy of model %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% Evaluate accuracy of model %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clear all
@@ -139,7 +139,7 @@ writetable(results_table, fullfile('results_table.dat'))
 
 %% Plot V_RMS, Csurf_RMS, Cavg_RMS
 % voltage
-figure; hold on;  grid on;
+figure('position', [0 0 600 400]); hold on;  grid on;
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'voltage') & results_table.c_rate == c_rates(i);
@@ -153,7 +153,7 @@ set(gca,'Fontsize',12, 'XScale', 'log');
 saveas(gcf,'voltage_rmse_plot.png')
 
 % surface concentration (anode)
-figure; hold on;  grid on;
+figure('position', [0 0 600 400]); hold on;  grid on;
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'csn_surf') & results_table.c_rate == c_rates(i);
@@ -167,7 +167,7 @@ set(gca,'Fontsize',12, 'XScale', 'log');
 saveas(gcf,'cn_surf_rmse_plot.png')
 
 % surface concentration (cathode)
-figure; hold on;  grid on;
+figure('position', [0 0 600 400]); hold on;  grid on;
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'csp_surf') & results_table.c_rate == c_rates(i);
@@ -181,7 +181,7 @@ set(gca,'Fontsize',12, 'XScale', 'log');
 saveas(gcf,'cp_surf_rmse_plot.png')
 
 % average concentration (anode)
-figure; hold on;  grid on;
+figure('position', [0 0 600 400]); hold on;  grid on;
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'csn_avg') & results_table.c_rate == c_rates(i);
@@ -195,7 +195,7 @@ set(gca,'Fontsize',12, 'XScale', 'log');
 saveas(gcf,'cn_avg_rmse_plot.png')
 
 % average concentration (cathode)
-figure; hold on;  grid on;
+figure('position', [0 0 600 400]); hold on;  grid on;
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'csp_avg') & results_table.c_rate == c_rates(i);
