@@ -18,7 +18,7 @@ function [V_cell, R_l, T_core, T_surf,soc_bulk_n, soc_bulk_p, cs_n, cs_p,...
 
     % SPECIFY: Finite Difference / Volume Discretization Parameters
     param.Nc = 1;       % Number of cells in series
-    param.Nr = 10;      % Number of radial discretization grids in ESPM
+    param.Nr = 100;      % Number of radial discretization grids in ESPM
     param.Nx_n = 10;    % Number of cartesian discretization grids in ESPM
     param.Nx_s = 10;    % Number of cartesian discretization grids in ESPM
     param.Nx_p = 10;    % Number of cartesian discretization grids in ESPM

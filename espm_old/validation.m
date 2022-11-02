@@ -76,8 +76,8 @@ tic
  ce_all,L_sei,i_s,Q,V_oc,R_el,R_sei,Csolv,aina_n,aina_p,...
  c_sei,c_li,i_lpl,L_film,af_n,af_p,param] = ESPM_sim(x_opt,dt,t_data,I_data,SOC_cc,SOC_IC,Q_IC,Lsei_IC,T_amb);
 caltime=toc
-% plot(V_cell)
-plot(cs_n(end,:))
+plot(V_cell)
+% plot(cs_n(end,:))
 
 
 all_data.ce=ce_all;
