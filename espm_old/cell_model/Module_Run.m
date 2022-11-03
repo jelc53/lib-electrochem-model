@@ -29,7 +29,7 @@ tspan = param.t_data;
 param.TIMEOLD = datetime('now','Format','HHmmss');
 
 %NB: Set to 5e-12 for HPPC; 5e-5 for capacity and UDDS
-reltol=5.0e-12; abstol=reltol*0.001;
+reltol=5.0e-8; abstol=reltol*0.001;
 
 event_formatted = @(t,x) physical_event_function_tk(t,x,param); 
 options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
