@@ -4,7 +4,7 @@ soc_int_n = [param.delta_xn:param.delta_xn:param.delta_xn*(param.Nr-1)]';
 soc_int_p = [param.delta_xp:param.delta_xp:param.delta_xp*(param.Nr-1)]';
 
 % for j = 1:length(param.t_data)
-for j = 1:length(cs_n) %NOTE: Changed this from param.t_data for ODE event function handling
+for j = 1:size(cs_n,2) %NOTE: Changed this from param.t_data for ODE event function handling
 for i = 1:param.Nc
 shift_R = (i-1)*(param.Nr-1);
 xbulk_n(i,j) = trapz(soc_int_n,soc_int_n.^2.*cs_n(shift_R+1:shift_R+...

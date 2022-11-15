@@ -77,11 +77,11 @@ else
 end
 
 %% Finite Volume alternative for solid phase
-[t_out,u_out,te2,xe2,ie2] = fvm_solver_jelc(x_initial(1:2*(param.Nr-1)), param, tspan);
-cs = u_out(1:(param.Nr-2)*param.Nc*2,:);            %All solid concentrations
-cs_n = cs(1:(param.Nr-2)*param.Nc,:);               %Anode Concentrations
-cs_p = cs((param.Nr-2)*param.Nc+1:end,:);
-plot(cs_n(end,:))
+% [t_out,u_out,te2,xe2,ie2] = fvm_solver_jelc(x_initial(1:2*(param.Nr-1)), param, tspan);
+% cs = u_out(1:(param.Nr-2)*param.Nc*2,:);            %All solid concentrations
+% cs_n = cs(1:(param.Nr-2)*param.Nc,:);               %Anode Concentrations
+% cs_p = cs((param.Nr-2)*param.Nc+1:end,:);
+% plot(cs_n(end,:))
 
 %% Separate electrochemical, thermal & aging state variables from x_out matrix
 %Define solid concentrations

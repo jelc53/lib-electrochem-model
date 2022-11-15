@@ -40,11 +40,6 @@ options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
 [t_out, x_out,te,xe,ie] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_initial, options);
 trigged_index=ie;
 trigged_time=te;
-% tic
-% [t_out, x_out] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_initial, options);
-% toc
-% options=odeset('RelTol',reltol,'AbsTol',abstol);
-% [t_out, x_out] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_initial, options);
 
 % Transpose state matrix into row form to match established data structure 
 x_out = x_out';
@@ -81,6 +76,14 @@ else
     param.I_data = I_dummy;
     param.t_data = t_out;
 end
+
+%% Finite Volume alternative for solid phase
+% [t_out,u_out,te2,xe2,ie2] = fvm_solver_jelc(x_initial(1:2*(param.Nr-1)), param, tspan);
+% cs = u_out(1:(param.Nr-2)*param.Nc*2,:);            %All solid concentrations
+% cs_n = cs(1:(param.Nr-2)*param.Nc,:);               %Anode Concentrations
+% cs_p = cs((param.Nr-2)*param.Nc+1:end,:);
+% plot(cs_n(end,:))
+
 %% Separate electrochemical, thermal & aging state variables from x_out matrix
 %Define solid concentrations
 cs = x_out(1:(param.Nr-1)*param.Nc*2,:);            %All solid concentrations
@@ -117,7 +120,7 @@ T_cell=[300;300]*ones(1,size(x_out,2));
 % Csolv = x_out(index_aging+1:end,:); %Solvent Concentration in SEI 
 
 %% Temperature dependent transport and kinetics for each cell
-for j = 1:length(cs)
+for j = 1:size(cs,2)  %NOTE: check length(cs) is a bug!
     % Surface concentration -> surface stoichiometry
     for i = 1:param.Nc
         theta_surf_n(i,j) = cs_n(i*(param.Nr-1),j)/param.c_n_max;

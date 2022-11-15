@@ -48,13 +48,13 @@ SOC_IC=0;
 % SOC_IC=0;
 
 % =======================Condition 4: Multiple charge and discharge cycles
-% randn('seed',10);
-% num_cycles=10;
-% discharge_time=3600;
-% use_time=discharge_time*2*num_cycles;
-% I_data=-2.4/1*ones(1,discharge_time);
-% I_data=repmat([I_data,-I_data],1,num_cycles)+0.0001*randn(1,use_time);
-% SOC_IC=0;
+randn('seed',10);
+num_cycles=2;
+discharge_time=3600;
+use_time=discharge_time*2*num_cycles;
+I_data=-2.4/1*ones(1,discharge_time);
+I_data=repmat([I_data,-I_data],1,num_cycles)+0.0001*randn(1,use_time);
+SOC_IC=0;
 
 t_data=linspace(0,use_time-1,use_time);
 dt=1;
