@@ -8,9 +8,9 @@
           SOC_cc, SOC_IC,Q_IC,Lsei_IC,T_amb) 
 
     % For a custom input current profile
-%     param.t_duration = t_data(end);                % simulation time in seconds
-%     param.dt = dt;                                 % sampling time            
 %     param.t_data = [0:param.dt:param.t_duration]'; % time vector
+    param.t_duration = t_data(end);                % simulation time in seconds
+    param.dt = dt;                                 % sampling time            
     param.t_data = t_data;
     param.I_data = I_data;                         % current vector
     param.SOC_cc = SOC_cc;                         % Coulomb-counted SOC (needed for lumped resistance)
@@ -22,7 +22,7 @@
 
     % SPECIFY: Finite Difference / Volume Discretization Parameters
     param.Nc = 1;       % Number of cells in series
-    param.Nr = 5;      % Number of radial discretization grids in ESPM
+    param.Nr = 1000;      % Number of radial discretization grids in ESPM
     param.Nx_n = 10;    % Number of cartesian discretization grids in ESPM
     param.Nx_s = 10;    % Number of cartesian discretization grids in ESPM
     param.Nx_p = 10;    % Number of cartesian discretization grids in ESPM

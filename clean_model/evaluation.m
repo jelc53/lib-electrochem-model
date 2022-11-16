@@ -7,14 +7,16 @@ close all
 warning off
 clc
 
-model = 'spm_fdm';
-ref_model = 'espm_fdm';
+model = 'spm';
+scheme = 'fdm';
+model_scheme = append(append(model, '_'), scheme); 
+reference = 'espm_fdm';
 
 %% Reference solutions
 % load data from previous runs
-ref_iapp24 = load(fullfile('output',append(ref_model,'_nr1000_cr1_time3600_cyc0.mat')));
-ref_iapp48 = load(fullfile('output',append(ref_model,'_nr1000_cr2_time1000_cyc0.mat')));
-ref_iapp96 = load(fullfile('output',append(ref_model,'_nr1000_cr4_time300_cyc0.mat')));
+ref_iapp24 = load(fullfile('output','fdm',append(reference,'_nr1000_cr1_time3600_cyc0.mat')));
+ref_iapp48 = load(fullfile('output','fdm',append(reference,'_nr1000_cr2_time1000_cyc0.mat')));
+ref_iapp96 = load(fullfile('output','fdm',append(reference,'_nr1000_cr4_time300_cyc0.mat')));
 ref_data = [ref_iapp24 ref_iapp48 ref_iapp96];
 
 ref_table = table;
@@ -55,8 +57,8 @@ variable_names = {'measure','nr','c_rate','t_duration','last_ref','last_val','rm
 for i = 1:length(c_rates)
     for j = 1:length(nr_dims)
         % load experiment data
-        filename = string(model ) + '_nr' + string(nr_dims(j)) + '_cr' + string(c_rates(i)) + '_time' + string(cr_duration(i)) + '_cyc0.mat';
-        exp_data = load(fullfile('output',filename));
+        filename = string(model_scheme) + '_nr' + string(nr_dims(j)) + '_cr' + string(c_rates(i)) + '_time' + string(cr_duration(i)) + '_cyc0.mat';
+        exp_data = load(fullfile('output',scheme,filename));
         
         Nr = exp_data.all_data.node_Nr;
         ref_Nr = ref_data(i).all_data.node_Nr;
@@ -135,75 +137,81 @@ for i = 1:length(c_rates)
     end
 end
 results_table.Properties.VariableNames = variable_names;
-writetable(results_table, fullfile('results_table.dat'))
+writetable(results_table, fullfile(append(scheme,'_results_table.dat')))
 
 %% Plot V_RMS, Csurf_RMS, Cavg_RMS
 % voltage
-figure('position', [0 0 600 400]); hold on;  grid on;
+figure('position', [0 0 600 400]);
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'voltage') & results_table.c_rate == c_rates(i);
     a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    hold on;  grid on;
 end
 M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
 legend(a, [M1, M2, M3]);
 xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
 ylabel('Voltage RMSE','Fontsize',12,'interpreter','latex')
 set(gca,'Fontsize',12, 'XScale', 'log');
-saveas(gcf,'voltage_rmse_plot.png')
+saveas(gcf,append(scheme,'_voltage_rmse_plot.png'))
 
 % surface concentration (anode)
-figure('position', [0 0 600 400]); hold on;  grid on;
+figure('position', [0 0 600 400]);
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'csn_surf') & results_table.c_rate == c_rates(i);
-    a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    a = [a, loglog(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    %     a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    hold on; grid on;
 end
 M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
 legend(a, [M1, M2, M3]);
 xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
 ylabel('Anode Csurf RMSE','Fontsize',12,'interpreter','latex')
 set(gca,'Fontsize',12, 'XScale', 'log');
-saveas(gcf,'cn_surf_rmse_plot.png')
+saveas(gcf,append(scheme,'_cn_surf_rmse_plot.png'))
 
 % surface concentration (cathode)
-figure('position', [0 0 600 400]); hold on;  grid on;
+figure('position', [0 0 600 400]);
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'csp_surf') & results_table.c_rate == c_rates(i);
-    a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    a = [a, loglog(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    hold on;  grid on;
 end
 M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
 legend(a, [M1, M2, M3]);
 xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
 ylabel('Cathode Csurf RMSE','Fontsize',12,'interpreter','latex')
 set(gca,'Fontsize',12, 'XScale', 'log');
-saveas(gcf,'cp_surf_rmse_plot.png')
+saveas(gcf,append(scheme,'_cp_surf_rmse_plot.png'))
 
 % average concentration (anode)
-figure('position', [0 0 600 400]); hold on;  grid on;
+figure('position', [0 0 600 400]); 
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'csn_avg') & results_table.c_rate == c_rates(i);
-    a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    a = [a, loglog(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    hold on;  grid on;
 end
 M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
 legend(a, [M1, M2, M3]);
 xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
 ylabel('Anode Cavg RMSE','Fontsize',12,'interpreter','latex')
 set(gca,'Fontsize',12, 'XScale', 'log');
-saveas(gcf,'cn_avg_rmse_plot.png')
+saveas(gcf,append(scheme,'_cn_avg_rmse_plot.png'))
 
 % average concentration (cathode)
-figure('position', [0 0 600 400]); hold on;  grid on;
+figure('position', [0 0 600 400]);
 a = [];
 for i = 1:length(c_rates)
     idx = strcmp(results_table.measure,'csp_avg') & results_table.c_rate == c_rates(i);
-    a = [a, semilogx(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    a = [a, loglog(results_table.nr(idx), results_table.rmse(idx), 'linewidth', 1)];
+    hold on; grid on;
 end
 M1 = "c-rate = 1"; M2 = "c-rate = 2"; M3 = "c-rate = 4";
 legend(a, [M1, M2, M3]);
 xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
 ylabel('Cathode Cavg RMSE','Fontsize',12,'interpreter','latex')
 set(gca,'Fontsize',12, 'XScale', 'log');
-saveas(gcf,'cp_avg_rmse_plot.png')
+saveas(gcf,append(scheme,'_cp_avg_rmse_plot.png'))

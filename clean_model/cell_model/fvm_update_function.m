@@ -19,7 +19,7 @@ function [u_i] = fvm_update_function(u_out, param, dr, D_sj, F, A, L_j, a_sj)
 
         end
         
-        % conservative update schematic
+        % conservative update schematic (forward euler)
         u_i(k) = u_out(k) - (D_sj*4*pi) * (param.dt / dr) * (f_plus - f_minus);
 
     end

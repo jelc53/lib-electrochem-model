@@ -37,7 +37,7 @@ reltol=5.0e-8; abstol=reltol*0.001;
 event_formatted = @(t,x) physical_event_function_tk(t,x,param); 
 options=odeset('RelTol',reltol,'AbsTol',abstol,'Events',event_formatted);
 % options=odeset('RelTol',reltol,'AbsTol',abstol);
-[t_out, x_out,te,xe,ie] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_initial, options);
+[t_out,x_out,te,xe,ie] = ode15s(@(t_out, x_out) Module_ode(t_out, x_out, param), tspan, x_initial, options);
 trigged_index=ie;
 trigged_time=te;
 
@@ -78,20 +78,30 @@ else
 end
 
 %% Finite Volume alternative for solid phase
-% [t_out,u_out,te2,xe2,ie2] = fvm_solver_jelc(x_initial(1:2*(param.Nr-1)), param, tspan);
-% cs = u_out(1:(param.Nr-2)*param.Nc*2,:);            %All solid concentrations
-% cs_n = cs(1:(param.Nr-2)*param.Nc,:);               %Anode Concentrations
-% cs_p = cs((param.Nr-2)*param.Nc+1:end,:);
-% plot(cs_n(end,:))
+[t_out,u_out,te,xe,ie] = fvm_solver_jelc(x_initial(1:2*(param.Nr-1)), param, tspan);
+cs_fvm = u_out(1:(param.Nr-2)*param.Nc*2,:);            %All solid concentrations
+csn_fvm = cs_fvm(1:(param.Nr-2)*param.Nc,:);               %Anode Concentrations
+csp_fvm = cs_fvm((param.Nr-2)*param.Nc+1:end,:);
+
+idx = 1:(1+param.t_duration/param.dt);
+idxq = linspace(min(idx), max(idx), param.t_duration+1);
+csn_dt = [movmean(csn_fvm,2); csn_fvm(end,:)];
+csp_dt = [movmean(csp_fvm,2); csp_fvm(end,:)];
+cs_n = interp1(idx, csn_dt', idxq, 'linear')';
+cs_p = interp1(idx, csp_dt', idxq, 'linear')';
+cs = [cs_n ; cs_p];
+
+plot(cs_n(end,:))
+
 
 %% Separate electrochemical, thermal & aging state variables from x_out matrix
 %Define solid concentrations
-cs = x_out(1:(param.Nr-1)*param.Nc*2,:);            %All solid concentrations
-cs_n = cs(1:(param.Nr-1)*param.Nc,:);               %Anode Concentrations
-cs_p = cs((param.Nr-1)*param.Nc+1:end,:);           %Cathode Concentrations
-if ~isreal(cs_p)                                                    
-    cs_p = abs(cs_p);
-end
+% cs = x_out(1:(param.Nr-1)*param.Nc*2,:);            %All solid concentrations
+% cs_n = cs(1:(param.Nr-1)*param.Nc,:);               %Anode Concentrations
+% cs_p = cs((param.Nr-1)*param.Nc+1:end,:);           %Cathode Concentrations
+% if ~isreal(cs_p)                                                    
+%     cs_p = abs(cs_p);
+% end
 
 index_cs = (param.Nr-1)*param.Nc*2;                 %Index for final solid concentration
 index_ce = index_cs + param.Nc*param.ce_states;     %Index for final electrolyte concentration
