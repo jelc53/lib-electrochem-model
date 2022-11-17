@@ -7,11 +7,13 @@ close all
 warning off
 clc
 
-model = 'spm_fdm';
+model = 'spm';
+scheme = 'fvm';
+model_scheme = append(append(model, '_'), scheme); 
 
 %% Populate results tables
 c_rates = [1 2 4];
-nr_dims = [5 10 100];
+nr_dims = [5 10]; % 100];
 t_duration = [3600 1000 300];
 results = cell(length(c_rates));
 
@@ -21,8 +23,8 @@ for i = 1:length(c_rates)
     
     for j = 1:length(nr_dims)
         % load experiment data
-        filename = string(model) + '_nr' + string(nr_dims(j)) + '_cr' + string(c_rates(i)) + '_time' + string(t_duration(i)) + '_cyc10.mat';
-        exp_data = load(fullfile('output',filename));
+        filename = string(model_scheme) + '_nr' + string(nr_dims(j)) + '_cr' + string(c_rates(i)) + '_time' + string(t_duration(i)) + '_cyc10.mat';
+        exp_data = load(fullfile('output',scheme,filename));
 
         % compute radial averages
         Nr = exp_data.all_data.node_Nr;
@@ -64,7 +66,7 @@ for e = electrode
         xlabel('time step (sec)','Fontsize',12,'interpreter','latex')
         ylabel('cs'+string(e)+' average @ c-rate of '+string(c_rates(i)),'Fontsize',12,'interpreter','latex')
         set(gca,'Fontsize',12);
-        filename = strcat('stability', '_cs', string(e), '_cr', string(c_rates(i)), '_plot.png');
+        filename = strcat(scheme, '_stability', '_cs', string(e), '_cr', string(c_rates(i)), '_plot.png');
         saveas(gcf,fullfile('output', filename)) 
     end
 end

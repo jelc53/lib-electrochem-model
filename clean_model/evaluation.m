@@ -8,7 +8,7 @@ warning off
 clc
 
 model = 'spm';
-scheme = 'fdm';
+scheme = 'fvm';
 model_scheme = append(append(model, '_'), scheme); 
 reference = 'espm_fdm';
 
@@ -50,7 +50,7 @@ writetable(ref_table, fullfile('ref_table.dat'))
 %% Experiments to evaluate accuracy
 results_table = table;
 c_rates = [1 2 4];
-nr_dims = [5 10 100 1000];
+nr_dims = [5 10 100]; % 1000];
 cr_duration = [3600 1000 300];
 variable_names = {'measure','nr','c_rate','t_duration','last_ref','last_val','rmse'};
 

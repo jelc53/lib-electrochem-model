@@ -22,7 +22,7 @@
 
     % SPECIFY: Finite Difference / Volume Discretization Parameters
     param.Nc = 1;       % Number of cells in series
-    param.Nr = 1000;      % Number of radial discretization grids in ESPM
+    param.Nr = 10;      % Number of radial discretization grids in ESPM
     param.Nx_n = 10;    % Number of cartesian discretization grids in ESPM
     param.Nx_s = 10;    % Number of cartesian discretization grids in ESPM
     param.Nx_p = 10;    % Number of cartesian discretization grids in ESPM

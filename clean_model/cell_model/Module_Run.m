@@ -83,12 +83,8 @@ cs_fvm = u_out(1:(param.Nr-2)*param.Nc*2,:);            %All solid concentration
 csn_fvm = cs_fvm(1:(param.Nr-2)*param.Nc,:);               %Anode Concentrations
 csp_fvm = cs_fvm((param.Nr-2)*param.Nc+1:end,:);
 
-idx = 1:(1+param.t_duration/param.dt);
-idxq = linspace(min(idx), max(idx), param.t_duration+1);
-csn_dt = [movmean(csn_fvm,2); csn_fvm(end,:)];
-csp_dt = [movmean(csp_fvm,2); csp_fvm(end,:)];
-cs_n = interp1(idx, csn_dt', idxq, 'linear')';
-cs_p = interp1(idx, csp_dt', idxq, 'linear')';
+cs_n = [movmean(csn_fvm,2); csn_fvm(end,:)];
+cs_p = [movmean(csp_fvm,2); csp_fvm(end,:)];
 cs = [cs_n ; cs_p];
 
 plot(cs_n(end,:))
