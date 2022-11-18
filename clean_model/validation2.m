@@ -36,10 +36,10 @@ load([pwd '/opt_res/hist/x_opt_tk_v0_UDDS_1000_1s.mat'])
 % use_time=3000;
 
 %=======================Condition 2: Constant charge
-% use_time=3600;
-% randn('seed', 10);
-% I_data=-2.4/1*ones(1,use_time)+0.0001*randn(1,use_time);
-% SOC_IC=0;
+use_time=3600;
+randn('seed', 10);
+I_data=-2.4/1*ones(1,use_time)+0.0001*randn(1,use_time);
+SOC_IC=0;
 
 % %=======================Condition 3: Constant charge 1/20 C
 % use_time=3600*20;
@@ -48,17 +48,17 @@ load([pwd '/opt_res/hist/x_opt_tk_v0_UDDS_1000_1s.mat'])
 % SOC_IC=0;
 
 % =======================Condition 4: Multiple charge and discharge cycles
-randn('seed',10);
-num_cycles=10;
-discharge_time=3600;
-use_time=discharge_time*2*num_cycles;
-I_data=-2.4/1*ones(1,discharge_time);
-I_data=repmat([I_data,-I_data],1,num_cycles)+0.0001*randn(1,use_time);
-SOC_IC=0;
+% randn('seed',10);
+% num_cycles=10;
+% discharge_time=3600;
+% use_time=discharge_time*2*num_cycles;
+% I_data=-2.4/1*ones(1,discharge_time);
+% I_data=repmat([I_data,-I_data],1,num_cycles)+0.0001*randn(1,use_time);
+% SOC_IC=0;
 
 timeinterval=1;
 t_data=0:timeinterval:use_time-1;
-dt=0.01;
+dt=1;
 Q_IC=5;
 Lsei_IC=0;
 T_amb=23;
@@ -95,4 +95,4 @@ all_data.node_Nxn=param.Nx_n;
 all_data.par=param;
 all_data.V=V_cell;
 all_data.caltime=caltime;
-save('spm_fvm_nr10_cr1_time3600_cyc10.mat','all_data') %'Oldsolver_re.mat'
+save('spm_fvm_nr10_cr1_time3600_cyc0.mat','all_data') %'Oldsolver_re.mat'

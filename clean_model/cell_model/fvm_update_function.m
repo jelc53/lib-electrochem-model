@@ -10,7 +10,7 @@ function [u_i] = fvm_update_function(u_out, param, dr, D_sj, F, A, L_j, a_sj)
             f_minus = fvm_viscous_flux(r, dr, u_out(k), u_out(k));
 
         elseif k == param.Nr-2  % surface of particle
-            f_plus = param.I_data(1) / (D_sj*F*A*L_j*a_sj);  % constant current
+            f_plus = r^2 * param.I_data(1) / (D_sj*F*A*L_j*a_sj);  % constant current
             f_minus = fvm_viscous_flux(r, dr, u_out(k), u_out(k-1));
 
         else
@@ -20,10 +20,8 @@ function [u_i] = fvm_update_function(u_out, param, dr, D_sj, F, A, L_j, a_sj)
         end
         
         % conservative update schematic (forward euler)
-        u_i(k) = u_out(k) - (D_sj*4*pi) * (param.dt / dr) * (f_plus - f_minus);
+        u_i(k) = u_out(k) - D_sj * (param.dt / dr) * (f_plus - f_minus);
 
     end
-%     r_i = [movmean(u_i, 2), u_i(end)];
-%     u_out = [u_out; u_i];
-%     r_out = [r_out; r_i];
+
 end
