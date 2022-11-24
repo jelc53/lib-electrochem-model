@@ -78,17 +78,18 @@ else
 end
 
 %% Finite Volume alternative for solid phase
-[t_out,cell_out,te,xe,ie] = fvm_solver_jelc(x_initial(1:2*(param.Nr-1)), param, tspan);
-cs_fvm = cell_out(1:(param.Nr-1)*param.Nc*2,:);            %All solid concentrations
-csn_fvm = cs_fvm(1:(param.Nr-1)*param.Nc,:);               %Anode Concentrations
-csp_fvm = cs_fvm((param.Nr-1)*param.Nc+1:end,:);
+% [t_out,cell_out,te,xe,ie] = fvm_solver_jelc(x_initial(1:2*(param.Nr-1)), param, tspan);
+options=odeset('RelTol',reltol,'AbsTol',abstol);
+rp_sq_vec = generate_radius_vec(param.delta_xp, param.Nr).^2;
+rn_sq_vec = generate_radius_vec(param.delta_xn, param.Nr).^2;
+u_initial = x_initial(1:2*(param.Nr-1)).*[rn_sq_vec rp_sq_vec]';
+[t_out,u_out] = ode15s(@(t_out, u_out) fvm_ode(t_out, u_out, param), tspan, u_initial, options);
+cell_out = u_out' .* [1./rn_sq_vec 1./rp_sq_vec]';
 
-%TODO!
-cs_n = [movmean(csn_fvm,2,'Endpoints', 'discard'); csn_fvm(end,:)];
-cs_p = [movmean(csp_fvm,2,'Endpoints', 'discard'); csp_fvm(end,:)];
+cs_fvm = cell_out(1:(param.Nr-1)*param.Nc*2,:);         %All solid concentrations
+cs_n = cs_fvm(1:(param.Nr-1)*param.Nc,:);               %Anode Concentrations
+cs_p = cs_fvm((param.Nr-1)*param.Nc+1:end,:);           %Cathode Concentrations
 cs = [cs_n ; cs_p];
-
-plot(cs_n(end,:))
 
 
 %% Separate electrochemical, thermal & aging state variables from x_out matrix
@@ -99,7 +100,6 @@ plot(cs_n(end,:))
 % if ~isreal(cs_p)                                                    
 %     cs_p = abs(cs_p);
 % end
-% plot(cs_n(end,:))
 
 index_cs = (param.Nr-1)*param.Nc*2;                 %Index for final solid concentration
 index_ce = index_cs + param.Nc*param.ce_states;     %Index for final electrolyte concentration

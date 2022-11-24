@@ -68,3 +68,30 @@ for e = electrode
         saveas(gcf,fullfile('output', filename)) 
     end
 end
+
+
+%% TODO Plot V_cell over 10 cycles for each c-rate
+% electrode = ['n', 'p'];
+% for e = electrode
+%     for i = 1:length(c_rates)
+%         % negative electrode 
+%         figure('position', [0 0 600 300]); hold on;  grid on; a = [];
+%         results_table = results{i};
+%         for j = 1:length(nr_dims)
+%             col_name = 'cs' + string(e) + '_nr' + string(nr_dims(j));
+%             x = 1:(t_duration(i)*2*10);    
+%             y = results_table.(col_name);
+%             a = [a, plot(x, y, 'linewidth', 1)];
+%         end
+%         col_name = 'cs' + string(e) + '_nr5';
+%         yline(max(results_table.(col_name)(1:(2*t_duration(i)))), 'r');
+%         yline(min(results_table.(col_name)(1:(2*t_duration(i)))), 'r');
+%         M1 = "Nr = 5"; M2 = "Nr = 10"; M3 = "Nr = 100";
+%         legend(a, [M1, M2, M3]);
+%         xlabel('time step (sec)','Fontsize',12,'interpreter','latex')
+%         ylabel('cs'+string(e)+' voltage @ c-rate of '+string(c_rates(i)),'Fontsize',12,'interpreter','latex')
+%         set(gca,'Fontsize',12);
+%         filename = strcat('voltage_over_cycles', '_cs', string(e), '_cr', string(c_rates(i)), '_plot.png');
+%         saveas(gcf,fullfile('output', filename)) 
+%     end
+% end

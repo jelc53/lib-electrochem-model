@@ -10,13 +10,13 @@ clc
 model = 'spm';
 scheme = 'fvm';
 model_scheme = append(append(model, '_'), scheme); 
-reference = 'espm_fdm';
+reference = 'espm_fvm';
 
 %% Reference solutions
 % load data from previous runs
-ref_iapp24 = load(fullfile('output','fdm',append(reference,'_nr1000_cr1_time3600_cyc0.mat')));
-ref_iapp48 = load(fullfile('output','fdm',append(reference,'_nr1000_cr2_time1000_cyc0.mat')));
-ref_iapp96 = load(fullfile('output','fdm',append(reference,'_nr1000_cr4_time300_cyc0.mat')));
+ref_iapp24 = load(fullfile('output',scheme,append(reference,'_nr1000_cr1_time3600_cyc0.mat')));
+ref_iapp48 = load(fullfile('output',scheme,append(reference,'_nr1000_cr2_time1000_cyc0.mat')));
+ref_iapp96 = load(fullfile('output',scheme,append(reference,'_nr1000_cr4_time300_cyc0.mat')));
 ref_data = [ref_iapp24 ref_iapp48 ref_iapp96];
 
 ref_table = table;
@@ -42,15 +42,36 @@ for i = 1:length(ref_data)
     ];
 end
 
-ref_table.Properties.RowNames = {'voltage';'cathode_surf_con';'anode_surf_con';'cathode_avg_con';'anode_avg_con'};
+ref_table.Properties.RowNames = {'voltage';'anode_surf_con';'cathode_surf_con';'anode_avg_con';'cathode_avg_con'};
 ref_table.Properties.VariableNames = {'iapp24';'iapp48';'iapp96'};
 writetable(ref_table, fullfile('ref_table.dat'))
 
+%% Baseline plots
+% voltage (solid only)
+figure('position', [0 0 600 400]);
+plot(ref_data(1).all_data.V);
+xlabel('Time step (dt = 1 sec)','Fontsize',12,'interpreter','latex')
+ylabel('Voltage','Fontsize',12,'interpreter','latex')
+saveas(gcf,append(scheme,'_baseline_voltage_cyc0.png'))
+
+% surface concentration (anode)
+figure('position', [0 0 600 400]);
+plot(ref_data(1).all_data.csn(end,:));
+xlabel('Time step (dt = 1 sec)','Fontsize',12,'interpreter','latex')
+ylabel('Anode Surface Concentration (mol/m^3)','Fontsize',12,'interpreter','latex')
+saveas(gcf,append(scheme,'_baseline_anode_surface_cyc0.png'))
+
+% surface concentration (cathode)
+figure('position', [0 0 600 400]);
+plot(ref_data(1).all_data.csp(end,:));
+xlabel('Time step (dt = 1 sec)','Fontsize',12,'interpreter','latex')
+ylabel('Cathode Surface Concentration (mol/m^3)','Fontsize',12,'interpreter','latex')
+saveas(gcf,append(scheme,'_baseline_cathode_surface_cyc0.png'))
 
 %% Experiments to evaluate accuracy
 results_table = table;
 c_rates = [1 2 4];
-nr_dims = [5 10 100]; % 1000];
+nr_dims = [5 10 100 1000];
 cr_duration = [3600 1000 300];
 variable_names = {'measure','nr','c_rate','t_duration','last_ref','last_val','rmse'};
 
@@ -215,3 +236,4 @@ xlabel('Spatial resolution (Nr)','Fontsize',12,'interpreter','latex')
 ylabel('Cathode Cavg RMSE','Fontsize',12,'interpreter','latex')
 set(gca,'Fontsize',12, 'XScale', 'log');
 saveas(gcf,append(scheme,'_cp_avg_rmse_plot.png'))
+

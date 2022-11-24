@@ -16,8 +16,8 @@ addpath cell_model
 
 %% Load identification results
 
-load([pwd '/opt_res/hist/x_opt_tk_v0_UDDS_1000_1s.mat'])
-
+load([pwd '/opt_res/hist/x_opt_tk_v0_UDDS.mat'])
+% load([pwd '/opt_res/hist/x_opt_tk_v0_UDDS_1000_1s.mat'])
 
 % % Set err_Up to 0 (remove effect of U_p identification)
 % err_Up = 0;
@@ -81,10 +81,26 @@ tic
 %  c_sei,c_li,i_lpl,L_film,af_n,af_p,param] = ESPM_sim(x_opt,dt,t_data,I_data,SOC_cc,SOC_IC,Q_IC,Lsei_IC,T_amb);
 [V_cell, R_l, T_core, T_surf,soc_bulk_n, soc_bulk_p, cs_n, cs_p,...
           ce_all,V_oc,R_el,R_sei,param] = ESPM_sim(x_opt,dt,t_data,I_data,SOC_cc,SOC_IC,Q_IC,Lsei_IC,T_amb);
+[w csp_avg] = radial_average(cs_p,param.Nr,param.Rs_p,param.delta_xp);
+[w csn_avg] = radial_average(cs_n,param.Nr,param.Rs_n,param.delta_xn);
 caltime=toc
-% plot(V_cell)
+
+%% Sense check plots
+plot(V_cell)
+
+figure;
 plot(cs_n(end,:))
 
+figure;
+plot(cs_p(end,:))
+
+% figure;
+% plot(csp_avg)
+% 
+% figure;
+% plot(csn_avg)
+
+%% Write to file
 all_data.ce=ce_all;
 all_data.csp=cs_p;
 all_data.csn=cs_n;
@@ -95,4 +111,5 @@ all_data.node_Nxn=param.Nx_n;
 all_data.par=param;
 all_data.V=V_cell;
 all_data.caltime=caltime;
-save('spm_fvm_nr10_cr1_time3600_cyc0.mat','all_data') %'Oldsolver_re.mat'
+
+save('Oldsolver_re.mat','all_data') %'Oldsolver_re.mat'

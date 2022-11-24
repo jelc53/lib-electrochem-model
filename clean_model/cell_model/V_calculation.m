@@ -21,7 +21,7 @@ R_l = p1.*SOC_cc.^6 + p2.*SOC_cc.^5 + p3.*SOC_cc.^4 + p4.*SOC_cc.^3 + ...
 
 % Cell voltage
 % V_cell = ocp_p - ocp_n + eta_p - eta_n + phi_e - R_l.*I - R_sei*I;
-V_cell = ocp_p - ocp_n + eta_p - eta_n; %NOTE: conversion to spm ;
+V_cell = ocp_p - ocp_n + eta_p - eta_n; %NOTE: conversion to spm + phi_e
 % disp(phi_e)
 
 % Fix errant values to minimum voltage
