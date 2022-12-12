@@ -1,0 +1,240 @@
+clear all
+clc
+
+N_DIM=10;
+
+%%%%%%%%%%%%%% REFERENCE %%%%%%%%%%%%%%%%%%%%%
+all_matlab_ref=load('matlab_ref_fdm_nr100.mat');
+all_matlab_ref=all_matlab_ref.all_data;
+
+t_ref=all_matlab_ref.t;
+t_ref=t_ref';
+
+V_ref=all_matlab_ref.V;
+V_ref=V_ref';
+
+cspave_ref=all_matlab_ref.cspave;
+csnave_ref=all_matlab_ref.csnave;
+cspave_ref=cspave_ref';
+csnave_ref=csnave_ref';
+
+cspsur_ref=all_matlab_ref.cssurp;
+csnsur_ref=all_matlab_ref.cssurn;
+cspsur_ref=cspsur_ref';
+csnsur_ref=csnsur_ref';
+
+%===check if the last timestep is float
+if t_ref(end)-round(t_ref(end))~=0
+%===the last timestep is float, delete it    
+t_ref(end)=[];
+V_ref(end)=[];   
+cspave_ref(end)=[];  
+csnave_ref(end)=[];  
+cspsur_ref(end)=[];  
+csnsur_ref(end)=[];  
+end
+
+
+
+%%%%%%%%%%%%%% FINITE DIFFERENCE %%%%%%%%%%%%%
+all_matlab_fdm=load(strcat('matlab_results_fdm_nr',string(N_DIM),'.mat'));
+all_matlab_fdm=all_matlab_fdm.all_data;
+
+t_fdm=all_matlab_fdm.t;
+t_fdm=t_fdm';
+
+V_fdm=all_matlab_fdm.V;
+V_fdm=V_fdm';
+
+cspave_fdm=all_matlab_fdm.cspave;
+csnave_fdm=all_matlab_fdm.csnave;
+cspave_fdm=cspave_fdm';
+csnave_fdm=csnave_fdm';
+
+cspsur_fdm=all_matlab_fdm.cssurp;
+csnsur_fdm=all_matlab_fdm.cssurn;
+cspsur_fdm=cspsur_fdm';
+csnsur_fdm=csnsur_fdm';
+
+%===check if the last timestep is float
+if t_fdm(end)-round(t_fdm(end))~=0
+%===the last timestep is float, delete it    
+t_fdm(end)=[];
+V_fdm(end)=[];   
+cspave_fdm(end)=[];  
+csnave_fdm(end)=[];  
+cspsur_fdm(end)=[];  
+csnsur_fdm(end)=[];  
+end
+
+
+
+%%%%%%%%%%%%%% FINITE VOLUME %%%%%%%%%%%%%%%%
+all_matlab_fvm=load(strcat('matlab_results_fvm_nr',string(N_DIM),'.mat'));
+all_matlab_fvm=all_matlab_fvm.all_data;
+
+t_fvm=all_matlab_fvm.t;
+t_fvm=t_fvm';
+
+V_fvm=all_matlab_fvm.V;
+V_fvm=V_fvm';
+
+cspave_fvm=all_matlab_fvm.cspave;
+csnave_fvm=all_matlab_fvm.csnave;
+cspave_fvm=cspave_fvm';
+csnave_fvm=csnave_fvm';
+
+cspsur_fvm=all_matlab_fvm.cssurp;
+csnsur_fvm=all_matlab_fvm.cssurn;
+cspsur_fvm=cspsur_fvm';
+csnsur_fvm=csnsur_fvm';
+
+%===check if the last timestep is float
+if t_fvm(end)-round(t_fvm(end))~=0
+%===the last timestep is float, delete it    
+t_fvm(end)=[];
+V_fvm(end)=[];   
+cspave_fvm(end)=[];  
+csnave_fvm(end)=[];  
+cspsur_fvm(end)=[];  
+csnsur_fvm(end)=[];  
+end
+
+
+
+%%%%%%%%%%%%%%%%% PYBAMM %%%%%%%%%%%%%%%%%%%%%
+t_pybamm=load(strcat('pybamm_t_single_nr',string(N_DIM),'.txt'));
+V_pybamm=load(strcat('pybamm_V_single_nr',string(N_DIM),'.txt'));
+
+
+cspave_pybamm=load(strcat('pybamm_cspave_single_nr',string(N_DIM),'.txt'));
+csnave_pybamm=load(strcat('pybamm_csnave_single_nr',string(N_DIM),'.txt'));
+
+
+cspsur_pybamm=load(strcat('pybamm_cspsur_single_nr',string(N_DIM),'.txt'));
+csnsur_pybamm=load(strcat('pybamm_csnsur_single_nr',string(N_DIM),'.txt'));
+
+
+%============= voltage ==============%
+figure;
+subplot(3,1,1)
+plot(t_ref,V_ref,'Linewidth',2)
+hold on
+plot(t_pybamm,V_pybamm,'--','Linewidth',2)
+hold on
+plot(t_fvm,V_fvm,'-.','Linewidth',2)
+hold on
+plot(t_fdm,V_fdm,':','Linewidth',2)
+
+xlabel('Time [s]');
+ylabel('Voltage [V]');
+fontsize=14;
+set(gca,'linewidth',1,'fontsize',fontsize,'fontname','Times New Roman');
+legend('Reference','Pybamm','Matlab-fvm','Matlab-fdm')
+
+
+rmseV_pybamm=rms(V_pybamm-V_ref)*1000;
+rmseV_fvm=rms(V_fvm-V_ref)*1000;
+rmseV_fdm=rms(V_fdm-V_ref)*1000;
+rmseV_fvm_pybamm=rms(V_fvm-V_pybamm)*1000;
+
+disp(['RMSE of Voltage pybamm (vs ref) =',num2str(rmseV_pybamm),' mV'])
+disp(['RMSE of Voltage fvm (vs ref) =',num2str(rmseV_fvm),' mV'])
+disp(['RMSE of Voltage fdm (vs ref) =',num2str(rmseV_fdm),' mV'])
+disp(['RMSE of Voltage fvm (vs pybamm) =',num2str(rmseV_fvm_pybamm),' mV'])
+
+
+%============= average concentration ==============%
+
+subplot(3,1,2)
+plot(t_ref,cspave_ref,'Linewidth',2)
+hold on
+plot(t_pybamm,cspave_pybamm,'--','Linewidth',2)
+hold on
+plot(t_fvm,cspave_fvm,'-.', 'Linewidth',2)
+hold on
+plot(t_fdm,cspave_fdm,':','Linewidth',2)
+
+xlabel('Time [s]');
+ylabel('Concentration [mol/m^3]');
+fontsize=14;
+set(gca,'linewidth',1,'fontsize',fontsize,'fontname','Times New Roman');
+legend('Reference','Pybamm','Matlab-fvm','Matlab-fdm')
+
+
+
+subplot(3,1,3)
+plot(t_ref,csnave_ref,'Linewidth',2)
+hold on
+plot(t_pybamm,csnave_pybamm,'--','Linewidth',2)
+hold on
+plot(t_fvm,csnave_fvm,'-.','Linewidth',2)
+hold on
+plot(t_fdm,csnave_fdm,':','Linewidth',2)
+
+xlabel('Time [s]');
+ylabel('Concentration [mol/m^3]');
+fontsize=14;
+set(gca,'linewidth',1,'fontsize',fontsize,'fontname','Times New Roman');
+legend('Reference','Pybamm','Matlab-fvm','Matlab-fdm')
+
+
+rmse_avep_pybamm=rms(cspave_pybamm-cspave_ref);
+rmse_aven_pybamm=rms(csnave_pybamm-csnave_ref);
+disp(['RMSE of csp_ave pybamm (vs ref) =',num2str(rmse_avep_pybamm),' mol/m^3'])
+disp(['RMSE of csn_ave pybamm (vs ref) =',num2str(rmse_aven_pybamm),' mol/m^3'])
+
+rmse_avep_fvm=rms(cspave_fvm-cspave_ref);
+rmse_aven_fvm=rms(csnave_fvm-csnave_ref);
+disp(['RMSE of csp_ave fvm (vs ref) =',num2str(rmse_avep_fvm),' mol/m^3'])
+disp(['RMSE of csn_ave fvm (vs ref) =',num2str(rmse_aven_fvm),' mol/m^3'])
+
+rmse_avep_fdm=rms(cspave_fdm-cspave_ref);
+rmse_aven_fdm=rms(csnave_fdm-csnave_ref);
+disp(['RMSE of csp_ave fdm (vs ref) =',num2str(rmse_avep_fdm),' mol/m^3'])
+disp(['RMSE of csn_ave fdm (vs ref) =',num2str(rmse_aven_fdm),' mol/m^3'])
+
+rmse_avep_fvm_pybamm=rms(cspave_fvm-cspave_pybamm);
+rmse_aven_fvm_pybamm=rms(csnave_fvm-csnave_pybamm);
+disp(['RMSE of csp_ave fvm (vs pybamm) =',num2str(rmse_avep_fvm_pybamm),' mol/m^3'])
+disp(['RMSE of csn_ave fvm (vs pybamm) =',num2str(rmse_aven_fvm_pybamm),' mol/m^3'])
+
+set(gcf,'unit','centimeters','position',[1,1.5,20,20])
+
+
+
+%============= surface concentration ==============%
+figure;
+subplot(2,1,1)
+plot(t_ref,cspsur_ref,'Linewidth',2)
+hold on
+plot(t_pybamm,cspsur_pybamm,'--','Linewidth',2)
+hold on
+plot(t_fvm,cspsur_fvm,'-.','Linewidth',2)
+hold on
+plot(t_fdm,cspsur_fdm,':','Linewidth',2)
+
+xlabel('Time [s]');
+ylabel('Concentration [mol/m^3]');
+fontsize=14;
+set(gca,'linewidth',1,'fontsize',fontsize,'fontname','Times New Roman');
+legend('Reference','Pybamm','Matlab-fvm','Matlab-fdm')
+
+
+subplot(2,1,2)
+plot(t_ref,csnsur_ref,'Linewidth',2)
+hold on
+plot(t_pybamm,csnsur_pybamm,'--','Linewidth',2)
+hold on
+plot(t_fvm,csnsur_fvm,'-.','Linewidth',2)
+hold on
+plot(t_fdm,csnsur_fdm,':','Linewidth',2)
+
+xlabel('Time [s]');
+ylabel('Concentration [mol/m^3]');
+fontsize=14;
+set(gca,'linewidth',1,'fontsize',fontsize,'fontname','Times New Roman');
+legend('Reference','Pybamm','Matlab-fvm','Matlab-fdm')
+
+
+
