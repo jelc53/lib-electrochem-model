@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2022.10.10)  14 OCT 2022 14:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2022.10.10)  15 DEC 2022 10:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -740,27 +740,23 @@ File: Figures//results.pdf Graphic file (type pdf)
 Package pdftex.def Info: Figures//results.pdf  used on input line 143.
 (pdftex.def)             Requested size: 242.41745pt x 181.81728pt.
  [2 <./Figures//results.pdf>]
-
-LaTeX Warning: Citation `Figueredo:2009dg' on page 3 undefined on input line 22
-6.
-
-
-LaTeX Warning: Citation `Smith:2012qr' on page 3 undefined on input line 226.
-
 No file writeup.bbl.
 
 AED: lastpage setting LastPage
 [3] (./writeup.aux)
 
-LaTeX Warning: There were undefined references.
+Package rerunfilecheck Warning: File `writeup.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
 
-Package rerunfilecheck Info: File `writeup.out' has not changed.
-(rerunfilecheck)             Checksum: F35D1739F48049EC7D0CE9049F61A52C;1821.
+Package rerunfilecheck Info: Checksums for `writeup.out':
+(rerunfilecheck)             Before: F35D1739F48049EC7D0CE9049F61A52C;1821
+(rerunfilecheck)             After:  DF400CD409CE3D4A77112990B1CEAF0D;2153.
  ) 
 Here is how much of TeX's memory you used:
- 16849 strings out of 480247
- 272838 string characters out of 5896150
- 711139 words of memory out of 5000000
+ 16851 strings out of 480247
+ 272865 string characters out of 5896150
+ 711146 words of memory out of 5000000
  34230 multiletter control sequences out of 15000+600000
  530564 words of font info for 282 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
@@ -773,10 +769,10 @@ urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic
 /uhvro8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/symbol/usyr.pfb></u
 sr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texliv
 e/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
-Output written on writeup.pdf (3 pages, 94574 bytes).
+Output written on writeup.pdf (3 pages, 93911 bytes).
 PDF statistics:
- 169 PDF objects out of 1000 (max. 8388607)
- 131 compressed objects within 2 object streams
- 26 named destinations out of 1000 (max. 500000)
+ 171 PDF objects out of 1000 (max. 8388607)
+ 133 compressed objects within 2 object streams
+ 28 named destinations out of 1000 (max. 500000)
  98422 words of extra memory for PDF output out of 106986 (max. 10000000)
 

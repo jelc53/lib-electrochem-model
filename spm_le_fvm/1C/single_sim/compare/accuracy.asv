@@ -156,7 +156,7 @@ hold on
 plot(t_fdm,cspave_fdm,':','Linewidth',2)
 
 xlabel('Time [s]');
-ylabel('Avg. concentration [mol/m^3]');
+ylabel('Concentration [mol/m^3]');
 fontsize=14;
 set(gca,'linewidth',1,'fontsize',fontsize,'fontname','Times New Roman');
 legend('Reference','Pybamm','Matlab-fvm','Matlab-fdm')
@@ -173,7 +173,7 @@ hold on
 plot(t_fdm,csnave_fdm,':','Linewidth',2)
 
 xlabel('Time [s]');
-ylabel('Avg. concentration [mol/m^3]');
+ylabel('Averoncentration [mol/m^3]');
 fontsize=14;
 set(gca,'linewidth',1,'fontsize',fontsize,'fontname','Times New Roman');
 legend('Reference','Pybamm','Matlab-fvm','Matlab-fdm')
@@ -215,7 +215,7 @@ hold on
 plot(t_fdm,cspsur_fdm,':','Linewidth',2)
 
 xlabel('Time [s]');
-ylabel('Surf. concentration [mol/m^3]');
+ylabel('Surface concentration [mol/m^3]');
 fontsize=14;
 set(gca,'linewidth',1,'fontsize',fontsize,'fontname','Times New Roman');
 legend('Reference','Pybamm','Matlab-fvm','Matlab-fdm')
@@ -231,7 +231,7 @@ hold on
 plot(t_fdm,csnsur_fdm,':','Linewidth',2)
 
 xlabel('Time [s]');
-ylabel('Surf. concentration [mol/m^3]');
+ylabel('Surface concentration [mol/m^3]');
 fontsize=14;
 set(gca,'linewidth',1,'fontsize',fontsize,'fontname','Times New Roman');
 legend('Reference','Pybamm','Matlab-fvm','Matlab-fdm')
